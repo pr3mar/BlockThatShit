@@ -46,6 +46,18 @@ namespace BlockerApp {
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
 	private: System::Windows::Forms::NotifyIcon^  notifyIcon1;
+	private: System::Windows::Forms::TabPage^  tabPage3;
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::ListBox^  listBox1;
+	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::Button^  button2;
+	private: System::Windows::Forms::Button^  button4;
+	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+	private: System::Windows::Forms::DateTimePicker^  dateTimePicker1;
+	private: System::Windows::Forms::DateTimePicker^  dateTimePicker2;
+	private: System::Windows::Forms::RadioButton^  radioButton2;
+	private: System::Windows::Forms::RadioButton^  radioButton1;
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -73,10 +85,24 @@ namespace BlockerApp {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->listBox1 = (gcnew System::Windows::Forms::ListBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
+			this->dateTimePicker2 = (gcnew System::Windows::Forms::DateTimePicker());
+			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
+			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
 			this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
+			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->menuStrip1->SuspendLayout();
 			this->tabControl1->SuspendLayout();
+			this->tabPage1->SuspendLayout();
+			this->tabPage2->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// menuStrip1
@@ -106,18 +132,21 @@ namespace BlockerApp {
 			this->blockToolStripMenuItem->Name = L"blockToolStripMenuItem";
 			this->blockToolStripMenuItem->Size = System::Drawing::Size(106, 22);
 			this->blockToolStripMenuItem->Text = L"Open";
+			this->blockToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::blockToolStripMenuItem_Click);
 			// 
 			// aboutToolStripMenuItem
 			// 
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(106, 22);
 			this->aboutToolStripMenuItem->Text = L"Block!";
+			this->aboutToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::aboutToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem1
 			// 
 			this->exitToolStripMenuItem1->Name = L"exitToolStripMenuItem1";
 			this->exitToolStripMenuItem1->Size = System::Drawing::Size(106, 22);
 			this->exitToolStripMenuItem1->Text = L"Exit";
+			this->exitToolStripMenuItem1->Click += gcnew System::EventHandler(this, &MainForm::exitToolStripMenuItem1_Click);
 			// 
 			// aboutToolStripMenuItem1
 			// 
@@ -130,36 +159,158 @@ namespace BlockerApp {
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
 			this->exitToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->exitToolStripMenuItem->Text = L"Exit";
+			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::exitToolStripMenuItem_Click);
 			// 
 			// tabControl1
 			// 
+			this->tabControl1->Appearance = System::Windows::Forms::TabAppearance::FlatButtons;
 			this->tabControl1->Controls->Add(this->tabPage1);
 			this->tabControl1->Controls->Add(this->tabPage2);
-			this->tabControl1->Location = System::Drawing::Point(0, 27);
+			this->tabControl1->Controls->Add(this->tabPage3);
+			this->tabControl1->Location = System::Drawing::Point(12, 27);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(791, 536);
+			this->tabControl1->Size = System::Drawing::Size(760, 523);
 			this->tabControl1->TabIndex = 1;
 			// 
 			// tabPage1
 			// 
-			this->tabPage1->Location = System::Drawing::Point(4, 22);
+			this->tabPage1->Controls->Add(this->button4);
+			this->tabPage1->Controls->Add(this->button3);
+			this->tabPage1->Controls->Add(this->button2);
+			this->tabPage1->Controls->Add(this->listBox1);
+			this->tabPage1->Controls->Add(this->button1);
+			this->tabPage1->Controls->Add(this->textBox1);
+			this->tabPage1->Location = System::Drawing::Point(4, 25);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(783, 510);
+			this->tabPage1->Size = System::Drawing::Size(752, 494);
 			this->tabPage1->TabIndex = 0;
-			this->tabPage1->Text = L"tabPage1";
+			this->tabPage1->Text = L"Sites";
 			this->tabPage1->UseVisualStyleBackColor = true;
+			// 
+			// button4
+			// 
+			this->button4->Location = System::Drawing::Point(247, 454);
+			this->button4->Name = L"button4";
+			this->button4->Size = System::Drawing::Size(260, 23);
+			this->button4->TabIndex = 5;
+			this->button4->Text = L"Clear list";
+			this->button4->UseVisualStyleBackColor = true;
+			this->button4->Click += gcnew System::EventHandler(this, &MainForm::button4_Click);
+			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(247, 425);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(260, 23);
+			this->button3->TabIndex = 4;
+			this->button3->Text = L"Import a file";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &MainForm::button3_Click);
+			// 
+			// button2
+			// 
+			this->button2->Location = System::Drawing::Point(381, 73);
+			this->button2->Name = L"button2";
+			this->button2->Size = System::Drawing::Size(177, 23);
+			this->button2->TabIndex = 3;
+			this->button2->Text = L"Remove";
+			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &MainForm::button2_Click);
+			// 
+			// listBox1
+			// 
+			this->listBox1->FormattingEnabled = true;
+			this->listBox1->Location = System::Drawing::Point(247, 116);
+			this->listBox1->Name = L"listBox1";
+			this->listBox1->Size = System::Drawing::Size(260, 290);
+			this->listBox1->TabIndex = 2;
+			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(198, 73);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(177, 23);
+			this->button1->TabIndex = 1;
+			this->button1->Text = L"Add";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MainForm::button1_Click);
+			// 
+			// textBox1
+			// 
+			this->textBox1->AcceptsReturn = true;
+			this->textBox1->Location = System::Drawing::Point(198, 38);
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->Size = System::Drawing::Size(360, 20);
+			this->textBox1->TabIndex = 0;
+			this->textBox1->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MainForm::textBox1_KeyPress);
 			// 
 			// tabPage2
 			// 
-			this->tabPage2->Location = System::Drawing::Point(4, 22);
+			this->tabPage2->Controls->Add(this->radioButton2);
+			this->tabPage2->Controls->Add(this->radioButton1);
+			this->tabPage2->Controls->Add(this->dateTimePicker2);
+			this->tabPage2->Controls->Add(this->dateTimePicker1);
+			this->tabPage2->Location = System::Drawing::Point(4, 25);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(783, 510);
+			this->tabPage2->Size = System::Drawing::Size(752, 494);
 			this->tabPage2->TabIndex = 1;
-			this->tabPage2->Text = L"tabPage2";
+			this->tabPage2->Text = L"Schedule";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			this->radioButton2->AutoSize = true;
+			this->radioButton2->Location = System::Drawing::Point(202, 283);
+			this->radioButton2->Name = L"radioButton2";
+			this->radioButton2->Size = System::Drawing::Size(43, 17);
+			this->radioButton2->TabIndex = 4;
+			this->radioButton2->Text = L"24h";
+			this->radioButton2->UseVisualStyleBackColor = true;
+			this->radioButton2->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButton2_CheckedChanged);
+			// 
+			// radioButton1
+			// 
+			this->radioButton1->AutoSize = true;
+			this->radioButton1->Checked = true;
+			this->radioButton1->Location = System::Drawing::Point(202, 259);
+			this->radioButton1->Name = L"radioButton1";
+			this->radioButton1->Size = System::Drawing::Size(57, 17);
+			this->radioButton1->TabIndex = 3;
+			this->radioButton1->TabStop = true;
+			this->radioButton1->Text = L"regular";
+			this->radioButton1->UseVisualStyleBackColor = true;
+			this->radioButton1->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButton1_CheckedChanged);
+			// 
+			// dateTimePicker2
+			// 
+			this->dateTimePicker2->CustomFormat = L"HH:mm:tt";
+			this->dateTimePicker2->DropDownAlign = System::Windows::Forms::LeftRightAlignment::Right;
+			this->dateTimePicker2->Format = System::Windows::Forms::DateTimePickerFormat::Custom;
+			this->dateTimePicker2->Location = System::Drawing::Point(202, 207);
+			this->dateTimePicker2->MinDate = System::DateTime(2015, 1, 15, 0, 0, 0, 0);
+			this->dateTimePicker2->Name = L"dateTimePicker2";
+			this->dateTimePicker2->ShowUpDown = true;
+			this->dateTimePicker2->Size = System::Drawing::Size(106, 20);
+			this->dateTimePicker2->TabIndex = 2;
+			// 
+			// dateTimePicker1
+			// 
+			this->dateTimePicker1->Location = System::Drawing::Point(351, 207);
+			this->dateTimePicker1->Name = L"dateTimePicker1";
+			this->dateTimePicker1->Size = System::Drawing::Size(200, 20);
+			this->dateTimePicker1->TabIndex = 1;
+			// 
+			// tabPage3
+			// 
+			this->tabPage3->Location = System::Drawing::Point(4, 25);
+			this->tabPage3->Name = L"tabPage3";
+			this->tabPage3->Size = System::Drawing::Size(752, 494);
+			this->tabPage3->TabIndex = 2;
+			this->tabPage3->Text = L"Start";
+			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
 			// notifyIcon1
 			// 
@@ -168,6 +319,11 @@ namespace BlockerApp {
 			this->notifyIcon1->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"notifyIcon1.Icon")));
 			this->notifyIcon1->Text = L"Blocker";
 			this->notifyIcon1->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::notifyIcon1_MouseDoubleClick);
+			// 
+			// openFileDialog1
+			// 
+			this->openFileDialog1->Filter = L"Text Files|*.txt";
+			this->openFileDialog1->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &MainForm::openFileDialog1_FileOk);
 			// 
 			// MainForm
 			// 
@@ -185,6 +341,10 @@ namespace BlockerApp {
 			this->menuStrip1->ResumeLayout(false);
 			this->menuStrip1->PerformLayout();
 			this->tabControl1->ResumeLayout(false);
+			this->tabPage1->ResumeLayout(false);
+			this->tabPage1->PerformLayout();
+			this->tabPage2->ResumeLayout(false);
+			this->tabPage2->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -195,11 +355,12 @@ namespace BlockerApp {
 		//check if window is open - if yes, when minimized the tray icon is visible
 		//and the form is hidden
 
+		//MAINFORM MINIMIZE TO TRAY
 	private: System::Void MainForm_Resize(System::Object^  sender, System::EventArgs^  e)
 	{
 		notifyIcon1->BalloonTipTitle = "Minimized to tray!";
 		notifyIcon1->BalloonTipText = "Blocker has been minimized to the system tray. It will continue to run in the background!";
-	
+
 		if (FormWindowState::Minimized == this->WindowState)
 		{
 			notifyIcon1->Visible = true;
@@ -212,11 +373,81 @@ namespace BlockerApp {
 			notifyIcon1->Visible = false;
 		}
 	}
-
-	private: System::Void notifyIcon1_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
+			 //ON TRAY ICON DOUBLECLICK
+	private: System::Void notifyIcon1_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
 	{
 		this->Show();
 		this->WindowState = FormWindowState::Normal;
+	}
+			 //ADD LISTBOX ITEMS
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (textBox1->TextLength != 0)
+		{
+			listBox1->Items->Add(textBox1->Text);
+		}
+	}
+			 //REMOVE LISTBOX ITEMS
+	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		listBox1->Items->Remove(listBox1->SelectedItem);
+	}
+			 //CLEAR LISTBOX ITEMS
+	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		listBox1->Items->Clear();
+	}
+
+			 //TEXTBOX ENTER KEY PRESS
+	private: System::Void textBox1_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^ e)
+	{
+		if ((e->KeyChar == 13) && (textBox1->TextLength != 0))
+		{
+			listBox1->Items->Add(textBox1->Text);
+		}
+	}
+			 //OPEN FILE DIALOG
+	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		openFileDialog1->ShowDialog();
+	}
+			 //ON FILE OK -> DO
+	private: System::Void openFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e)
+	{
+		listBox1->Items->AddRange(IO::File::ReadAllLines(openFileDialog1->FileName));
+
+	}
+			 //ON TOOLSTRIP MENU EXIT BUTTON CLICK
+	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		Application::Exit();
+	}
+	private: System::Void exitToolStripMenuItem1_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		Application::Exit();
+	}
+	private: System::Void blockToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		openFileDialog1->ShowDialog();
+	}
+	private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (openFileDialog1->FileName != "\n")
+		{
+			MessageBox::Show("Please enter a website to block first!", "Error!", MessageBoxButtons::OK);
+		}
+		else
+		{
+			//TODO
+		}
+	}
+	private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) 
+	{
+		dateTimePicker2->CustomFormat = "HH:mm";
+	}
+	private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) 
+	{
+		dateTimePicker2->CustomFormat = "HH:mm tt";
 	}
 };
 
