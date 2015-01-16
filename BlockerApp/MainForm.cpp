@@ -10,7 +10,6 @@ void main(array<String^>^ args)
 	Application::SetCompatibleTextRenderingDefault(false);
 
 	//admin rights stuff
-
 	System::Security::Principal::WindowsPrincipal^ principal;
 	principal = gcnew System::Security::Principal::WindowsPrincipal(System::Security::Principal::WindowsIdentity::GetCurrent());
 

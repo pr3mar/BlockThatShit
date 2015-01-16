@@ -469,10 +469,11 @@ namespace BlockerApp {
 		dateTimePicker1->MaxDate = DateTime::Now.AddDays(3);
 		dateTimePicker1->MinDate = DateTime::Now;
 
+		checkPrevState();
 	}
 			 //custom methods
 			 //check whether file with date and time exists (ex. if app was closed in the meantime)
-	private: System::Void checkPrevState(System::Object^ sender, System::EventArgs^ e)
+	private: System::Void checkPrevState()
 	{
 
 	}
@@ -492,7 +493,26 @@ namespace BlockerApp {
 			//open the hosts file and write the designated webpages
 	private: System::Void block()
 	{
+		System::String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
 
+		System::String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
+		
+		System::IO::StreamWriter^ sw = System::IO::File::AppendText(path);
+		try
+		{
+			sw->WriteLine("## blocker begin list");
+			
+			for each (auto item in listBox1->Items)
+			{
+				sw->WriteLine("127.0.0.1 "+ item->ToString());
+			}
+
+			sw->WriteLine("## blocker end list");
+		}
+		finally
+		{
+			sw->Close();
+		}
 	}
 			 //block button click
 	private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e)
