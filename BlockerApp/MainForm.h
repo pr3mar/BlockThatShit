@@ -58,6 +58,7 @@ namespace BlockerApp {
 	private: System::Windows::Forms::DateTimePicker^  dateTimePicker2;
 	private: System::Windows::Forms::RadioButton^  radioButton2;
 	private: System::Windows::Forms::RadioButton^  radioButton1;
+	private: System::Windows::Forms::Button^  button5;
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -97,12 +98,14 @@ namespace BlockerApp {
 			this->dateTimePicker2 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->menuStrip1->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
+			this->tabPage3->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// menuStrip1
@@ -263,7 +266,7 @@ namespace BlockerApp {
 			// radioButton2
 			// 
 			this->radioButton2->AutoSize = true;
-			this->radioButton2->Location = System::Drawing::Point(202, 283);
+			this->radioButton2->Location = System::Drawing::Point(202, 277);
 			this->radioButton2->Name = L"radioButton2";
 			this->radioButton2->Size = System::Drawing::Size(43, 17);
 			this->radioButton2->TabIndex = 4;
@@ -275,21 +278,20 @@ namespace BlockerApp {
 			// 
 			this->radioButton1->AutoSize = true;
 			this->radioButton1->Checked = true;
-			this->radioButton1->Location = System::Drawing::Point(202, 259);
+			this->radioButton1->Location = System::Drawing::Point(202, 253);
 			this->radioButton1->Name = L"radioButton1";
-			this->radioButton1->Size = System::Drawing::Size(57, 17);
+			this->radioButton1->Size = System::Drawing::Size(62, 17);
 			this->radioButton1->TabIndex = 3;
 			this->radioButton1->TabStop = true;
-			this->radioButton1->Text = L"regular";
+			this->radioButton1->Text = L"Regular";
 			this->radioButton1->UseVisualStyleBackColor = true;
 			this->radioButton1->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButton1_CheckedChanged);
 			// 
 			// dateTimePicker2
 			// 
-			this->dateTimePicker2->CustomFormat = L"HH:mm:tt";
-			this->dateTimePicker2->DropDownAlign = System::Windows::Forms::LeftRightAlignment::Right;
+			this->dateTimePicker2->CustomFormat = L"       HH:mm:tt";
 			this->dateTimePicker2->Format = System::Windows::Forms::DateTimePickerFormat::Custom;
-			this->dateTimePicker2->Location = System::Drawing::Point(202, 207);
+			this->dateTimePicker2->Location = System::Drawing::Point(202, 201);
 			this->dateTimePicker2->MinDate = System::DateTime(2015, 1, 15, 0, 0, 0, 0);
 			this->dateTimePicker2->Name = L"dateTimePicker2";
 			this->dateTimePicker2->ShowUpDown = true;
@@ -298,19 +300,30 @@ namespace BlockerApp {
 			// 
 			// dateTimePicker1
 			// 
-			this->dateTimePicker1->Location = System::Drawing::Point(351, 207);
+			this->dateTimePicker1->Location = System::Drawing::Point(328, 201);
 			this->dateTimePicker1->Name = L"dateTimePicker1";
 			this->dateTimePicker1->Size = System::Drawing::Size(200, 20);
 			this->dateTimePicker1->TabIndex = 1;
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->button5);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Size = System::Drawing::Size(752, 494);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Start";
 			this->tabPage3->UseVisualStyleBackColor = true;
+			// 
+			// button5
+			// 
+			this->button5->Location = System::Drawing::Point(205, 113);
+			this->button5->Name = L"button5";
+			this->button5->Size = System::Drawing::Size(300, 245);
+			this->button5->TabIndex = 0;
+			this->button5->Text = L"Block";
+			this->button5->UseVisualStyleBackColor = true;
+			this->button5->Click += gcnew System::EventHandler(this, &MainForm::button5_Click);
 			// 
 			// notifyIcon1
 			// 
@@ -337,6 +350,7 @@ namespace BlockerApp {
 			this->MaximizeBox = false;
 			this->Name = L"MainForm";
 			this->Text = L"Blocker";
+			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
 			this->Resize += gcnew System::EventHandler(this, &MainForm::MainForm_Resize);
 			this->menuStrip1->ResumeLayout(false);
 			this->menuStrip1->PerformLayout();
@@ -345,6 +359,7 @@ namespace BlockerApp {
 			this->tabPage1->PerformLayout();
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
+			this->tabPage3->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -441,14 +456,50 @@ namespace BlockerApp {
 			//TODO
 		}
 	}
-	private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) 
+	private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
 	{
-		dateTimePicker2->CustomFormat = "HH:mm";
+		dateTimePicker2->CustomFormat = "          HH:mm";
 	}
-	private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) 
+	private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
 	{
-		dateTimePicker2->CustomFormat = "HH:mm tt";
+		dateTimePicker2->CustomFormat = "       HH:mm:tt";
 	}
-};
+	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e)
+	{
+		dateTimePicker1->MaxDate = DateTime::Now.AddDays(3);
+		dateTimePicker1->MinDate = DateTime::Now;
 
+	}
+			 //custom methods
+			 //check whether file with date and time exists (ex. if app was closed in the meantime)
+	private: System::Void checkPrevState(System::Object^ sender, System::EventArgs^ e)
+	{
+
+	}
+			 //write to .txt file in the temp directory with the chosen date and time;
+	private: System::Void writeToFile()
+	{
+		System::String^ result;
+		result = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
+
+		System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(result);
+
+		sw->WriteLine(dateTimePicker1->Value.ToShortDateString());
+		sw->WriteLine(dateTimePicker2->Value.ToShortTimeString());
+		sw->Flush();
+		sw->Close();
+	}
+			//open the hosts file and write the designated webpages
+	private: System::Void block()
+	{
+
+	}
+			 //block button click
+	private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		writeToFile();
+		block();
+	}
+
+	};
 }
