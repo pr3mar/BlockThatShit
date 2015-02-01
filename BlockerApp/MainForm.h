@@ -67,7 +67,11 @@ namespace BlockerApp
 		private: System::Timers::Timer^ timer = gcnew System::Timers::Timer();
 		private: int clockTime = 0;
 		private: int alarmTime = 0;
-
+		private: String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
+		private: String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
+		private: String^ backuppath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
+		private: String^ blockedpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsblocked");
+		private: String^ txtpath = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
 
 
 		private: System::ComponentModel::IContainer^  components;
@@ -519,10 +523,7 @@ namespace BlockerApp
 				 //write to .txt file in the temp directory with the chosen date and time;
 		private: System::Void writeTimeToFile()
 		{
-			String^ result;
-			result = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
-
-			System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(result);
+			System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(txtpath);
 
 			sw->WriteLine(this->alarmTime);
 			sw->Flush();
@@ -533,9 +534,6 @@ namespace BlockerApp
 				 //open the hosts file and write the designated webpages
 		private: System::Void block()
 		{
-			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
-			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
-
 			System::IO::StreamWriter^ sw = System::IO::File::AppendText(path);
 			try
 			{
@@ -552,30 +550,48 @@ namespace BlockerApp
 			{
 				sw->Close();
 			}
+
+			System::IO::File::Copy(path, blockedpath, 1);
 		}
 
 		private: System::Void backup()
 		{
-			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
-			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
-			String^ bpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
-
-			System::IO::File::Copy(path, bpath, 1);
+			System::IO::File::Copy(path, backuppath, 1);
 		}
 
 
 		private: System::Void unblock()
 		{
-			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
-			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
-			String^ bpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
 
-			System::IO::File::Copy(bpath, path, 1);
 
-			System::IO::File::Delete(bpath);
+			System::IO::File::Copy(backuppath, path, 1);
+
+			System::IO::File::Delete(backuppath);
+			System::IO::File::Delete(txtpath);
+			System::IO::File::Delete(blockedpath);
 
 			timer->Stop();
-			MessageBox::Show("UNBLOCKED!");
+
+			if (FormWindowState::Minimized == this->WindowState)
+			{
+				notifyIcon1->BalloonTipText = "Unblocked.";
+				notifyIcon1->BalloonTipTitle = "";
+				notifyIcon1->ShowBalloonTip(500);
+			}
+			else
+			{
+				this->WindowState = FormWindowState::Minimized;
+				this->Show();
+				this->WindowState = FormWindowState::Normal;
+
+				MessageBox::Show("UNBLOCKED!");
+			}
+
+
+
+			label1->Visible = false;
+			button5->Visible = true;
+			button5->Enabled = true;
 		}
 
 				 //block button click
@@ -593,8 +609,6 @@ namespace BlockerApp
 			this->clockTime = currentTimeToSeconds();
 			this->timer->Start();
 			writeTimeToFile();
-			//MessageBox::Show("clock: " + this->clockTime + ", alarm: " + this->alarmTime + "\n diff: " + (this->alarmTime - this->clockTime));
-
 		}
 
 				 //TIMER CODE!
@@ -607,9 +621,14 @@ namespace BlockerApp
 
 		public: System::Void OnTimer(System::Object ^object, System::Timers::ElapsedEventArgs ^e)
 		{
+			int tempTime = 0;
+			int blockedHostsFileSize = System::IO::FileInfo(blockedpath).Length;
+			int currentHostsFileSize = 0;
+
 			try
 			{
 				this->clockTime++;
+				tempTime++;
 				int countdown = this->alarmTime - this->clockTime;
 
 				if (this->alarmTime != 0)
@@ -621,6 +640,21 @@ namespace BlockerApp
 				{
 					unblock();
 				}
+				else
+				{
+					if (tempTime == 30)
+					{
+						tempTime = 0;
+						currentHostsFileSize = System::IO::FileInfo(path).Length;
+
+						if (currentHostsFileSize != blockedHostsFileSize)
+						{
+							System::IO::File::Copy(blockedpath, path, 1);
+						}
+					}
+				}
+
+
 			}
 			catch (Exception^ ex)
 			{
