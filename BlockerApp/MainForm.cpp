@@ -4,7 +4,7 @@ using namespace System;
 using namespace System::Windows::Forms;
 
 [STAThread]
-void main(array<String^>^ args)
+int main(array<String^>^ argv)
 {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
@@ -28,11 +28,13 @@ void main(array<String^>^ args)
 		}
 		catch (...)
 		{
-			return;
+			return (-1);
 		}
-		return;
+		return (0);
 	}
 
 	BlockerApp::MainForm form;
 	Application::Run(%form);
+
+	return (0);
 }

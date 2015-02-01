@@ -1,29 +1,33 @@
 #pragma once
 
-namespace BlockerApp {
 
+namespace BlockerApp
+{
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Timers;
 
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
-	public:
+		public:
 		MainForm(void)
 		{
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
+
+			initTimer();
 		}
 
-	protected:
+		protected:
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -34,35 +38,42 @@ namespace BlockerApp {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::MenuStrip^  menuStrip1;
-	protected:
-	private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  blockToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem1;
-	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem1;
-	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
-	private: System::Windows::Forms::TabControl^  tabControl1;
-	private: System::Windows::Forms::TabPage^  tabPage1;
-	private: System::Windows::Forms::TabPage^  tabPage2;
-	private: System::Windows::Forms::NotifyIcon^  notifyIcon1;
-	private: System::Windows::Forms::TabPage^  tabPage3;
-	private: System::Windows::Forms::TextBox^  textBox1;
-	private: System::Windows::Forms::ListBox^  listBox1;
-	private: System::Windows::Forms::Button^  button1;
-	private: System::Windows::Forms::Button^  button2;
-	private: System::Windows::Forms::Button^  button4;
-	private: System::Windows::Forms::Button^  button3;
-	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
-	private: System::Windows::Forms::DateTimePicker^  dateTimePicker1;
-	private: System::Windows::Forms::DateTimePicker^  dateTimePicker2;
-	private: System::Windows::Forms::RadioButton^  radioButton2;
-	private: System::Windows::Forms::RadioButton^  radioButton1;
-	private: System::Windows::Forms::Button^  button5;
-	private: System::ComponentModel::IContainer^  components;
+		private: System::Windows::Forms::MenuStrip^  menuStrip1;
+		protected:
+		private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
+		private: System::Windows::Forms::ToolStripMenuItem^  blockToolStripMenuItem;
+		private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
+		private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem1;
+		private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem1;
+		private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
+		private: System::Windows::Forms::TabControl^  tabControl1;
+		private: System::Windows::Forms::TabPage^  tabPage1;
+		private: System::Windows::Forms::TabPage^  tabPage2;
+		private: System::Windows::Forms::NotifyIcon^  notifyIcon1;
+		private: System::Windows::Forms::TabPage^  tabPage3;
+		private: System::Windows::Forms::TextBox^  textBox1;
+		private: System::Windows::Forms::ListBox^  listBox1;
+		private: System::Windows::Forms::Button^  button1;
+		private: System::Windows::Forms::Button^  button2;
+		private: System::Windows::Forms::Button^  button4;
+		private: System::Windows::Forms::Button^  button3;
+		private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+		private: System::Windows::Forms::DateTimePicker^  dateTimePicker1;
+		private: System::Windows::Forms::DateTimePicker^  dateTimePicker2;
+		private: System::Windows::Forms::RadioButton^  radioButton2;
+		private: System::Windows::Forms::RadioButton^  radioButton1;
+		private: System::Windows::Forms::Button^  button5;
+		private: System::Windows::Forms::Label^  label1;
+		private: System::Timers::Timer^ timer = gcnew System::Timers::Timer();
+		private: int clockTime = 0;
+		private: int alarmTime = 0;
 
 
-	private:
+
+		private: System::ComponentModel::IContainer^  components;
+
+
+		private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -77,6 +88,7 @@ namespace BlockerApp {
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
+			this->timer = (gcnew System::Timers::Timer());
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->blockToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -98,9 +110,11 @@ namespace BlockerApp {
 			this->dateTimePicker2 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->timer))->BeginInit();
 			this->menuStrip1->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -108,9 +122,15 @@ namespace BlockerApp {
 			this->tabPage3->SuspendLayout();
 			this->SuspendLayout();
 			// 
+			// timer
+			// 
+			this->timer->Enabled = true;
+			this->timer->SynchronizingObject = this;
+			// 
 			// menuStrip1
 			// 
-			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3)
+			{
 				this->fileToolStripMenuItem,
 					this->aboutToolStripMenuItem1, this->exitToolStripMenuItem
 			});
@@ -122,7 +142,8 @@ namespace BlockerApp {
 			// 
 			// fileToolStripMenuItem
 			// 
-			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3)
+			{
 				this->blockToolStripMenuItem,
 					this->aboutToolStripMenuItem, this->exitToolStripMenuItem1
 			});
@@ -307,6 +328,7 @@ namespace BlockerApp {
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->label1);
 			this->tabPage3->Controls->Add(this->button5);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
 			this->tabPage3->Name = L"tabPage3";
@@ -314,6 +336,17 @@ namespace BlockerApp {
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Start";
 			this->tabPage3->UseVisualStyleBackColor = true;
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(134, 229);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(437, 13);
+			this->label1->TabIndex = 1;
+			this->label1->Text = L"You have been blocked. Please wait until the timer runs out, or input the super s"
+				L"ecret code!";
+			this->label1->Visible = false;
 			// 
 			// button5
 			// 
@@ -352,6 +385,7 @@ namespace BlockerApp {
 			this->Text = L"Blocker";
 			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
 			this->Resize += gcnew System::EventHandler(this, &MainForm::MainForm_Resize);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->timer))->EndInit();
 			this->menuStrip1->ResumeLayout(false);
 			this->menuStrip1->PerformLayout();
 			this->tabControl1->ResumeLayout(false);
@@ -360,6 +394,7 @@ namespace BlockerApp {
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
 			this->tabPage3->ResumeLayout(false);
+			this->tabPage3->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -371,155 +406,261 @@ namespace BlockerApp {
 		//and the form is hidden
 
 		//MAINFORM MINIMIZE TO TRAY
-	private: System::Void MainForm_Resize(System::Object^  sender, System::EventArgs^  e)
-	{
-		notifyIcon1->BalloonTipTitle = "Minimized to tray!";
-		notifyIcon1->BalloonTipText = "Blocker has been minimized to the system tray. It will continue to run in the background!";
-
-		if (FormWindowState::Minimized == this->WindowState)
+		private: System::Void MainForm_Resize(System::Object^  sender, System::EventArgs^  e)
 		{
-			notifyIcon1->Visible = true;
-			notifyIcon1->ShowBalloonTip(500);
-			this->Hide();
-		}
+			notifyIcon1->BalloonTipTitle = "Minimized to tray!";
+			notifyIcon1->BalloonTipText = "Blocker has been minimized to the system tray. It will continue to run in the background!";
 
-		else if (FormWindowState::Normal == this->WindowState)
-		{
-			notifyIcon1->Visible = false;
-		}
-	}
-			 //ON TRAY ICON DOUBLECLICK
-	private: System::Void notifyIcon1_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
-	{
-		this->Show();
-		this->WindowState = FormWindowState::Normal;
-	}
-			 //ADD LISTBOX ITEMS
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		if (textBox1->TextLength != 0)
-		{
-			listBox1->Items->Add(textBox1->Text);
-		}
-	}
-			 //REMOVE LISTBOX ITEMS
-	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		listBox1->Items->Remove(listBox1->SelectedItem);
-	}
-			 //CLEAR LISTBOX ITEMS
-	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		listBox1->Items->Clear();
-	}
-
-			 //TEXTBOX ENTER KEY PRESS
-	private: System::Void textBox1_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^ e)
-	{
-		if ((e->KeyChar == 13) && (textBox1->TextLength != 0))
-		{
-			listBox1->Items->Add(textBox1->Text);
-		}
-	}
-			 //OPEN FILE DIALOG
-	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		openFileDialog1->ShowDialog();
-	}
-			 //ON FILE OK -> DO
-	private: System::Void openFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e)
-	{
-		listBox1->Items->AddRange(IO::File::ReadAllLines(openFileDialog1->FileName));
-
-	}
-			 //ON TOOLSTRIP MENU EXIT BUTTON CLICK
-	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		Application::Exit();
-	}
-	private: System::Void exitToolStripMenuItem1_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		Application::Exit();
-	}
-	private: System::Void blockToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		openFileDialog1->ShowDialog();
-	}
-	private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		if (openFileDialog1->FileName != "\n")
-		{
-			MessageBox::Show("Please enter a website to block first!", "Error!", MessageBoxButtons::OK);
-		}
-		else
-		{
-			//TODO
-		}
-	}
-	private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
-	{
-		dateTimePicker2->CustomFormat = "          HH:mm";
-	}
-	private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
-	{
-		dateTimePicker2->CustomFormat = "       HH:mm:tt";
-	}
-	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e)
-	{
-		dateTimePicker1->MaxDate = DateTime::Now.AddDays(3);
-		dateTimePicker1->MinDate = DateTime::Now;
-
-		checkPrevState();
-	}
-			 //custom methods
-			 //check whether file with date and time exists (ex. if app was closed in the meantime)
-	private: System::Void checkPrevState()
-	{
-
-	}
-			 //write to .txt file in the temp directory with the chosen date and time;
-	private: System::Void writeToFile()
-	{
-		System::String^ result;
-		result = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
-
-		System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(result);
-
-		sw->WriteLine(dateTimePicker1->Value.ToShortDateString());
-		sw->WriteLine(dateTimePicker2->Value.ToShortTimeString());
-		sw->Flush();
-		sw->Close();
-	}
-			//open the hosts file and write the designated webpages
-	private: System::Void block()
-	{
-		System::String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
-
-		System::String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
-		
-		System::IO::StreamWriter^ sw = System::IO::File::AppendText(path);
-		try
-		{
-			sw->WriteLine("## blocker begin list");
-			
-			for each (auto item in listBox1->Items)
+			if (FormWindowState::Minimized == this->WindowState)
 			{
-				sw->WriteLine("127.0.0.1 "+ item->ToString());
+				notifyIcon1->Visible = true;
+				notifyIcon1->ShowBalloonTip(500);
+				this->Hide();
 			}
 
-			sw->WriteLine("## blocker end list");
+			else if (FormWindowState::Normal == this->WindowState)
+			{
+				notifyIcon1->Visible = false;
+			}
 		}
-		finally
+				 //ON TRAY ICON DOUBLECLICK
+		private: System::Void notifyIcon1_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
 		{
-			sw->Close();
+			this->Show();
+			this->WindowState = FormWindowState::Normal;
 		}
-	}
-			 //block button click
-	private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		writeToFile();
-		block();
-	}
+				 //ADD LISTBOX ITEMS
+		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			if (textBox1->TextLength != 0)
+			{
+				listBox1->Items->Add(textBox1->Text);
+				textBox1->Clear();
+			}
+		}
+				 //REMOVE LISTBOX ITEMS
+		private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			listBox1->Items->Remove(listBox1->SelectedItem);
+		}
+				 //CLEAR LISTBOX ITEMS
+		private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			listBox1->Items->Clear();
+		}
 
+				 //TEXTBOX ENTER KEY PRESS
+		private: System::Void textBox1_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^ e)
+		{
+			if ((e->KeyChar == 13) && (textBox1->TextLength != 0))
+			{
+				listBox1->Items->Add(textBox1->Text);
+				textBox1->Clear();
+			}
+		}
+				 //OPEN FILE DIALOG
+		private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			openFileDialog1->ShowDialog();
+		}
+				 //ON FILE OK -> DO
+		private: System::Void openFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e)
+		{
+			listBox1->Items->AddRange(IO::File::ReadAllLines(openFileDialog1->FileName));
+
+		}
+				 //ON TOOLSTRIP MENU EXIT BUTTON CLICK
+		private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			Application::Exit();
+		}
+		private: System::Void exitToolStripMenuItem1_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			Application::Exit();
+		}
+		private: System::Void blockToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			openFileDialog1->ShowDialog();
+		}
+		private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			if (openFileDialog1->FileName != "\n")
+			{
+				MessageBox::Show("Please enter a website to block first!", "Error!", MessageBoxButtons::OK);
+			}
+			else
+			{
+				//TODO
+			}
+		}
+		private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
+		{
+			dateTimePicker2->CustomFormat = "          HH:mm";
+		}
+		private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
+		{
+			dateTimePicker2->CustomFormat = "       HH:mm:tt";
+		}
+		private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e)
+		{
+			dateTimePicker1->MaxDate = DateTime::Now.AddDays(3);
+			dateTimePicker1->MinDate = DateTime::Now;
+
+			this->timer->Stop();
+
+			checkPrevState();
+		}
+				 //custom methods
+				 //check whether file with date and time exists (ex. if app was closed in the meantime)
+		private: System::Void checkPrevState()
+		{
+
+		}
+				 //write to .txt file in the temp directory with the chosen date and time;
+		private: System::Void writeTimeToFile()
+		{
+			String^ result;
+			result = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
+
+			System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(result);
+
+			sw->WriteLine(this->alarmTime);
+			sw->Flush();
+			sw->Close();
+
+
+		}
+				 //open the hosts file and write the designated webpages
+		private: System::Void block()
+		{
+			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
+			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
+
+			System::IO::StreamWriter^ sw = System::IO::File::AppendText(path);
+			try
+			{
+				sw->WriteLine("## blocker begin list");
+
+				for each (auto item in listBox1->Items)
+				{
+					sw->WriteLine("127.0.0.1 " + item->ToString());
+					sw->WriteLine("127.0.0.1 www." + item->ToString());
+				}
+				sw->WriteLine("## blocker end list");
+			}
+			finally
+			{
+				sw->Close();
+			}
+		}
+
+		private: System::Void backup()
+		{
+			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
+			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
+			String^ bpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
+
+			System::IO::File::Copy(path, bpath, 1);
+		}
+
+
+		private: System::Void unblock()
+		{
+			String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
+			String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
+			String^ bpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
+
+			System::IO::File::Copy(bpath, path, 1);
+
+			System::IO::File::Delete(bpath);
+
+			timer->Stop();
+			MessageBox::Show("UNBLOCKED!");
+		}
+
+				 //block button click
+		private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			backup();
+
+			block();
+
+			button5->Visible = false;
+			button5->Enabled = false;
+			label1->Visible = true;
+
+			inputToSeconds();
+			this->clockTime = currentTimeToSeconds();
+			this->timer->Start();
+			writeTimeToFile();
+			//MessageBox::Show("clock: " + this->clockTime + ", alarm: " + this->alarmTime + "\n diff: " + (this->alarmTime - this->clockTime));
+
+		}
+
+				 //TIMER CODE!
+		public: System::Void initTimer()
+		{
+			this->timer->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &MainForm::OnTimer);
+			this->timer->Interval = 1000;
+			this->timer->Enabled = true;
+		}
+
+		public: System::Void OnTimer(System::Object ^object, System::Timers::ElapsedEventArgs ^e)
+		{
+			try
+			{
+				this->clockTime++;
+				int countdown = this->alarmTime - this->clockTime;
+
+				if (this->alarmTime != 0)
+				{
+					//countdown
+				}
+
+				if (this->clockTime == this->alarmTime)
+				{
+					unblock();
+				}
+			}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show("OnTimer(): " + ex->Message);
+			}
+		}
+
+		private: System::Void inputToSeconds()
+		{
+			try
+			{
+				int minutes = 0;
+				int	hours = 0;
+
+				hours = dateTimePicker2->Value.Hour;
+				minutes = dateTimePicker2->Value.Minute;
+
+				this->alarmTime += minutes * 60;
+				this->alarmTime += (hours * 60) * 60;
+			}
+			catch (Exception^ e)
+			{
+				MessageBox::Show(e->Message);
+			}
+		}
+
+		private: System::Int32 currentTimeToSeconds()
+		{
+			int startTimeInSeconds = 0;
+			int hour;
+			int minutes;
+			this->clockTime = 0;
+
+			hour = DateTime::Now.Hour;
+			minutes = DateTime::Now.Minute;
+
+			startTimeInSeconds += minutes * 60;
+			startTimeInSeconds += (hour * 60) * 60;
+
+			return (startTimeInSeconds);
+		}
 	};
 }
