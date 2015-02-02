@@ -65,14 +65,17 @@ namespace BlockerApp
 		private: System::Windows::Forms::Button^  button5;
 		private: System::Windows::Forms::Label^  label1;
 		private: System::Timers::Timer^ timer = gcnew System::Timers::Timer();
+
 		private: int clockTime = 0;
 		private: int alarmTime = 0;
+
 		private: String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
 		private: String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
 		private: String^ backuppath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
 		private: String^ blockedpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsblocked");
 		private: String^ txtpath = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
 
+		private: System::IO::StreamWriter^ sw;
 
 		private: System::ComponentModel::IContainer^  components;
 
@@ -350,6 +353,7 @@ namespace BlockerApp
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"You have been blocked. Please wait until the timer runs out, or input the super s"
 				L"ecret code!";
+			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			this->label1->Visible = false;
 			// 
 			// button5
@@ -427,12 +431,14 @@ namespace BlockerApp
 				notifyIcon1->Visible = false;
 			}
 		}
+
 				 //ON TRAY ICON DOUBLECLICK
 		private: System::Void notifyIcon1_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
 		{
 			this->Show();
 			this->WindowState = FormWindowState::Normal;
 		}
+
 				 //ADD LISTBOX ITEMS
 		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
 		{
@@ -442,11 +448,13 @@ namespace BlockerApp
 				textBox1->Clear();
 			}
 		}
+
 				 //REMOVE LISTBOX ITEMS
 		private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			listBox1->Items->Remove(listBox1->SelectedItem);
 		}
+
 				 //CLEAR LISTBOX ITEMS
 		private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
 		{
@@ -462,30 +470,36 @@ namespace BlockerApp
 				textBox1->Clear();
 			}
 		}
+
 				 //OPEN FILE DIALOG
 		private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			openFileDialog1->ShowDialog();
 		}
+
 				 //ON FILE OK -> DO
 		private: System::Void openFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e)
 		{
 			listBox1->Items->AddRange(IO::File::ReadAllLines(openFileDialog1->FileName));
 
 		}
+
 				 //ON TOOLSTRIP MENU EXIT BUTTON CLICK
 		private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			Application::Exit();
 		}
+
 		private: System::Void exitToolStripMenuItem1_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			Application::Exit();
 		}
+
 		private: System::Void blockToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			openFileDialog1->ShowDialog();
 		}
+
 		private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 		{
 			if (openFileDialog1->FileName != "\n")
@@ -497,14 +511,17 @@ namespace BlockerApp
 				//TODO
 			}
 		}
+
 		private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
 		{
 			dateTimePicker2->CustomFormat = "          HH:mm";
 		}
+
 		private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e)
 		{
 			dateTimePicker2->CustomFormat = "       HH:mm:tt";
 		}
+
 		private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e)
 		{
 			dateTimePicker1->MaxDate = DateTime::Now.AddDays(3);
@@ -514,27 +531,45 @@ namespace BlockerApp
 
 			checkPrevState();
 		}
+
 				 //custom methods
 				 //check whether file with date and time exists (ex. if app was closed in the meantime)
 		private: System::Void checkPrevState()
 		{
+			String^ line;
 
+			if (System::IO::File::Exists(txtpath))
+			{
+				System::IO::StreamReader^ reader = gcnew System::IO::StreamReader(txtpath);
+				line = reader->ReadLine();
+
+				this->alarmTime = Int32::Parse(line);
+				this->clockTime = currentTimeToSeconds();
+				this->timer->Start();
+
+				button5->Enabled = false;
+				button5->Visible = false;
+				label1->Visible = true;
+
+				reader->Close();
+			}
 		}
+
 				 //write to .txt file in the temp directory with the chosen date and time;
 		private: System::Void writeTimeToFile()
 		{
-			System::IO::StreamWriter^ sw = gcnew System::IO::StreamWriter(txtpath);
+			sw = gcnew System::IO::StreamWriter(txtpath);
 
 			sw->WriteLine(this->alarmTime);
 			sw->Flush();
 			sw->Close();
-
-
 		}
+
 				 //open the hosts file and write the designated webpages
 		private: System::Void block()
 		{
-			System::IO::StreamWriter^ sw = System::IO::File::AppendText(path);
+			sw = System::IO::File::AppendText(path);
+
 			try
 			{
 				sw->WriteLine("## blocker begin list");
@@ -544,6 +579,7 @@ namespace BlockerApp
 					sw->WriteLine("127.0.0.1 " + item->ToString());
 					sw->WriteLine("127.0.0.1 www." + item->ToString());
 				}
+
 				sw->WriteLine("## blocker end list");
 			}
 			finally
@@ -559,16 +595,24 @@ namespace BlockerApp
 			System::IO::File::Copy(path, backuppath, 1);
 		}
 
-
 		private: System::Void unblock()
 		{
-
-
 			System::IO::File::Copy(backuppath, path, 1);
 
-			System::IO::File::Delete(backuppath);
-			System::IO::File::Delete(txtpath);
-			System::IO::File::Delete(blockedpath);
+			if (System::IO::File::Exists(backuppath))
+			{
+				System::IO::File::Delete(backuppath);
+			}
+
+			if (System::IO::File::Exists(txtpath))
+			{
+				System::IO::File::Delete(txtpath);
+			}
+
+			if (System::IO::File::Exists(backuppath))
+			{
+				System::IO::File::Delete(blockedpath);
+			}
 
 			timer->Stop();
 
@@ -584,10 +628,8 @@ namespace BlockerApp
 				this->Show();
 				this->WindowState = FormWindowState::Normal;
 
-				MessageBox::Show("UNBLOCKED!");
+				MessageBox::Show("Unblocked!");
 			}
-
-
 
 			label1->Visible = false;
 			button5->Visible = true;
@@ -633,7 +675,7 @@ namespace BlockerApp
 
 				if (this->alarmTime != 0)
 				{
-					//countdown
+					label1->Text = "time left: " + countdown.ToString();
 				}
 
 				if (this->clockTime == this->alarmTime)
@@ -653,8 +695,6 @@ namespace BlockerApp
 						}
 					}
 				}
-
-
 			}
 			catch (Exception^ ex)
 			{
