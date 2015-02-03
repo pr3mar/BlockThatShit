@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace BlockerApp
 {
 	using namespace System;
@@ -31,6 +30,7 @@ namespace BlockerApp
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+
 		~MainForm()
 		{
 			if (components)
@@ -38,6 +38,7 @@ namespace BlockerApp
 				delete components;
 			}
 		}
+
 		private: System::Windows::Forms::MenuStrip^  menuStrip1;
 		protected:
 		private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
@@ -68,17 +69,18 @@ namespace BlockerApp
 
 		private: int clockTime = 0;
 		private: int alarmTime = 0;
+		private: int tempTime = 0;
 
 		private: String^ systemPath = Environment::GetFolderPath(Environment::SpecialFolder::System);
 		private: String^ path = System::IO::Path::Combine(systemPath, "drivers\\etc\\hosts");
-		private: String^ backuppath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsb");
+		private: String^ backuppath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsbackup");
 		private: String^ blockedpath = System::IO::Path::Combine(systemPath, "drivers\\etc\\hostsblocked");
 		private: String^ txtpath = System::IO::Path::Combine(System::IO::Path::GetTempPath(), "blocker.txt");
 
 		private: System::IO::StreamWriter^ sw;
+		private: System::Windows::Forms::Label^  label2;
 
 		private: System::ComponentModel::IContainer^  components;
-
 
 		private:
 		/// <summary>
@@ -117,6 +119,7 @@ namespace BlockerApp
 			this->dateTimePicker2 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->notifyIcon1 = (gcnew System::Windows::Forms::NotifyIcon(this->components));
@@ -335,6 +338,7 @@ namespace BlockerApp
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->label2);
 			this->tabPage3->Controls->Add(this->label1);
 			this->tabPage3->Controls->Add(this->button5);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
@@ -344,21 +348,31 @@ namespace BlockerApp
 			this->tabPage3->Text = L"Start";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(175, 166);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(437, 13);
+			this->label2->TabIndex = 2;
+			this->label2->Text = L"You have been blocked. Please wait until the timer runs out, or input the super s"
+				L"ecret code!";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->label2->Visible = false;
+			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(134, 229);
+			this->label1->Location = System::Drawing::Point(302, 220);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(437, 13);
+			this->label1->Size = System::Drawing::Size(0, 13);
 			this->label1->TabIndex = 1;
-			this->label1->Text = L"You have been blocked. Please wait until the timer runs out, or input the super s"
-				L"ecret code!";
 			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			this->label1->Visible = false;
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(205, 113);
+			this->button5->Location = System::Drawing::Point(237, 126);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(300, 245);
 			this->button5->TabIndex = 0;
@@ -545,13 +559,22 @@ namespace BlockerApp
 
 				this->alarmTime = Int32::Parse(line);
 				this->clockTime = currentTimeToSeconds();
-				this->timer->Start();
-
-				button5->Enabled = false;
-				button5->Visible = false;
-				label1->Visible = true;
 
 				reader->Close();
+
+				if (this->clockTime >= this->alarmTime)
+				{
+					unblock();
+				}
+				else
+				{
+					this->timer->Start();
+
+					button5->Enabled = false;
+					button5->Visible = false;
+					label1->Visible = true;
+					label2->Visible = true;
+				}
 			}
 		}
 
@@ -563,6 +586,10 @@ namespace BlockerApp
 			sw->WriteLine(this->alarmTime);
 			sw->Flush();
 			sw->Close();
+
+			System::IO::File::SetAttributes(blockedpath, System::IO::FileAttributes::Hidden);
+			System::IO::File::SetAttributes(backuppath, System::IO::FileAttributes::Hidden);
+			System::IO::File::SetAttributes(txtpath, System::IO::FileAttributes::Hidden);
 		}
 
 				 //open the hosts file and write the designated webpages
@@ -572,6 +599,7 @@ namespace BlockerApp
 
 			try
 			{
+				sw->WriteLine("");
 				sw->WriteLine("## blocker begin list");
 
 				for each (auto item in listBox1->Items)
@@ -587,7 +615,7 @@ namespace BlockerApp
 				sw->Close();
 			}
 
-			System::IO::File::Copy(path, blockedpath, 1);
+			System::IO::File::Copy(path, blockedpath, 1);	
 		}
 
 		private: System::Void backup()
@@ -598,6 +626,8 @@ namespace BlockerApp
 		private: System::Void unblock()
 		{
 			System::IO::File::Copy(backuppath, path, 1);
+			System::IO::File::SetAttributes(path, System::IO::FileAttributes::Normal);
+
 
 			if (System::IO::File::Exists(backuppath))
 			{
@@ -609,12 +639,14 @@ namespace BlockerApp
 				System::IO::File::Delete(txtpath);
 			}
 
-			if (System::IO::File::Exists(backuppath))
+			if (System::IO::File::Exists(blockedpath))
 			{
 				System::IO::File::Delete(blockedpath);
 			}
 
 			timer->Stop();
+			this->clockTime = 0;
+			this->alarmTime = 0;
 
 			if (FormWindowState::Minimized == this->WindowState)
 			{
@@ -632,6 +664,7 @@ namespace BlockerApp
 			}
 
 			label1->Visible = false;
+			label2->Visible = false;
 			button5->Visible = true;
 			button5->Enabled = true;
 		}
@@ -639,18 +672,31 @@ namespace BlockerApp
 				 //block button click
 		private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e)
 		{
-			backup();
-
-			block();
-
-			button5->Visible = false;
-			button5->Enabled = false;
-			label1->Visible = true;
-
 			inputToSeconds();
 			this->clockTime = currentTimeToSeconds();
-			this->timer->Start();
-			writeTimeToFile();
+
+			if ((this->clockTime >= this->alarmTime) || (this->clockTime == 0 && this->alarmTime == 0))
+			{
+				MessageBox::Show("Please select a valid time!");
+				this->clockTime = 0;
+				this->alarmTime = 0;
+				
+			}
+			else
+			{
+				backup();
+				block();
+
+				button5->Visible = false;
+				button5->Enabled = false;
+				label1->Visible = true;
+				label2->Visible = true;
+
+				this->timer->Start();
+				writeTimeToFile();
+			}
+
+
 		}
 
 				 //TIMER CODE!
@@ -663,19 +709,28 @@ namespace BlockerApp
 
 		public: System::Void OnTimer(System::Object ^object, System::Timers::ElapsedEventArgs ^e)
 		{
-			int tempTime = 0;
-			int blockedHostsFileSize = System::IO::FileInfo(blockedpath).Length;
-			int currentHostsFileSize = 0;
+			Int64 blockedHostsFileSize = System::IO::FileInfo(blockedpath).Length;
+			Int64 currentHostsFileSize = System::IO::FileInfo(path).Length;
 
 			try
 			{
 				this->clockTime++;
 				tempTime++;
 				int countdown = this->alarmTime - this->clockTime;
+				int hours;
+				int minutes;
+				int seconds;
+				int remainder;
+
+				hours = countdown / 3600;
+				remainder = countdown % 3600;
+				minutes = remainder / 60;
+				seconds = remainder % 60;
 
 				if (this->alarmTime != 0)
 				{
-					label1->Text = "time left: " + countdown.ToString();
+					label1->Text = "time left: " + hours.ToString() + " hrs, " + minutes.ToString() + " mins, " + seconds.ToString() + " secs." +
+						"\n blocked:" + blockedHostsFileSize.ToString() + ", curr: " + currentHostsFileSize.ToString() + "\n temptime: " + tempTime.ToString();
 				}
 
 				if (this->clockTime == this->alarmTime)
@@ -684,14 +739,14 @@ namespace BlockerApp
 				}
 				else
 				{
-					if (tempTime == 30)
+					if (tempTime == 15)
 					{
 						tempTime = 0;
-						currentHostsFileSize = System::IO::FileInfo(path).Length;
-
+						
 						if (currentHostsFileSize != blockedHostsFileSize)
 						{
 							System::IO::File::Copy(blockedpath, path, 1);
+							System::IO::File::SetAttributes(path, System::IO::FileAttributes::Normal);
 						}
 					}
 				}
@@ -726,11 +781,14 @@ namespace BlockerApp
 			int startTimeInSeconds = 0;
 			int hour;
 			int minutes;
+			int seconds;
 			this->clockTime = 0;
 
 			hour = DateTime::Now.Hour;
 			minutes = DateTime::Now.Minute;
+			seconds = DateTime::Now.Second;
 
+			startTimeInSeconds += seconds;
 			startTimeInSeconds += minutes * 60;
 			startTimeInSeconds += (hour * 60) * 60;
 
